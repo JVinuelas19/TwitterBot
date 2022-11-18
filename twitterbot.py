@@ -6,6 +6,7 @@ import emoji
 import requests
 import shutil
 import mysql.connector
+from bs4 import BeautifulSoup
 from random import randint
 
 #This script generates tweets from the content in the eBird.org website. It has two ways to do so: extracting data from a database previously created with information
@@ -98,13 +99,63 @@ def anivia():
     tweet = emoji.emojize(':bird: ') +"Anivia\n"+emoji.emojize(':woman_scientist: ')+"The cryophoenix\n"+emoji.emojize(':information: ')+"My favorite champion with no doubt Anivia, the cryophoenix. She won't have much attack, she won't have much defense... but I love her. It's very hard to control, especially the Q.\n"+emoji.emojize(':magnifying_glass_tilted_right: ')+"https://www.leagueoflegends.com/en-gb/champions/anivia/"
     api.update_status(status=tweet, media_ids=[media.media_id])
 
+#Checks the eBird account and retweets everything since the last saved tweet ID. The user_timeline() function returns the last 20 tweets from the account.
+#We store that number to perform with the algorithm to retweet the most recent tweets
+def retweet():
+    TWEETS_OBTAINED=20
+    i=TWEETS_OBTAINED-1
+    retweets=0
+    done=False
+    #Gets the last retweet from file and try to search more tweets after the stored one. If there are new tweets, the bot will retweet the oldest per loop and sleep
+    #some seconds to avoid spam. Once the list is over, the bot will save the last ID of the list in the txt file and end.
+    read_id = open("eBirdTweets.txt", "r") 
+    tweets = api.user_timeline(screen_name="Team_eBird")
+    id = int(read_id.readline())
+    read_id.close()
+    if(tweets[0].id>id):
+        while(not done):
+            if(tweets[i].id > id):
+                api.retweet(tweets[i].id)
+                i-=1
+                retweets+=1
+                print("New retweet!")
+                time.sleep(30)
+            else:
+                print("This tweet is older than the text file ID, so it will be skipped.")
+                i-=1
+
+            if(i==-1):
+                write_id = open("eBirdTweets.txt", "w")
+                write_id.write(str(tweets[0].id))
+                write_id.close()
+                done = True
+                print("Timeline updated succesfully with "+str(retweets)+" new RTs!")
+                
+            
+    #If there are no new tweets it will print a message
+    else:
+        print("There are no tweets to retweet")
+
+#Function that returns a requested bird
+def pick_a_bird(bird):
+    print("Choose your bird")
+    url="https://en.wikipedia.org/wiki/"+bird
+    print(url)
+    page = requests.get(url)
+    soup = BeautifulSoup(page.content, 'html.parser')
+    name = soup.find('span', class_="mw-page-title-main").text
+    print(name)
+
+
 #Main loop
 def main():
     #Schedules 2 tweets at 2 different times everyday. Currently calls tweetbird_scrap() straight because i have no servers to keep the bot working all the time.
     #Don't use the tweet functions in the next while loop. Otherwise the bot will be tweeting each thirty seconds, and you can disturb Elon Musk and get the account suspended.
-    tweetbird_scrap()
     schedule.every().day.at("10:00:00").do(tweetbird_scrap)
     schedule.every().day.at("20:00:00").do(tweetbird_scrap)
+    retweet()
+    tweetbird_scrap()
+    #pick_a_bird('tucan')
     while True:
         #Check pending schedules, execute them if exists and sleeps for (in my case) 30 seconds.
         schedule.run_pending()
