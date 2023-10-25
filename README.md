@@ -9,8 +9,6 @@ Features:
 - Tweet IDs management (read and write IDs from file).
 - Retweet tweets from a selected account (in my case @Team_eBird , but it can retweet who you want) based on Tweet IDs to avoid redundancy retweets.
 - Reply to users if they ask for a concrete bird with that bird data: <br><br><br>
-![ornithobot_reply](https://github.com/JVinuelas19/TwitterBot/assets/111135343/4d3b8066-3962-4a28-bb61-2d9f9d2819ce) 
-<br><br>
 - Reply to users if they use target words (This feature has no use yet)
 - Reply to users if they use bad words with an advertise. (Ban system is not implemented yet)
 - It can randomly tweet (1% chance) a meme bird when using the second feature: Anivia the Cryophoenix 
