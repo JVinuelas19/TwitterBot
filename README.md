@@ -12,7 +12,7 @@ Features:
 - Reply to users if they use target words (This feature has no use yet)
 - Reply to users if they use bad words with an advertise. (Ban system is not implemented yet)
 - It can randomly tweet (1% chance) a meme bird when using the second feature: Anivia the Cryophoenix 
-<br><br>
+
 Future features will include a temporary ban system to the disrespectful replys, a database to manage these bans, thread creation with bird info instead of single tweets and an upgrade to the retweet function. 
 The database can be generated with the dump file and MySQL Workbench.
 The bot is currently unavailable due to Twitter API changes after the purchase of the brand by Elon Musk. I will fix it ASAP.
