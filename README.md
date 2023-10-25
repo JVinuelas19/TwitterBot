@@ -1,8 +1,6 @@
 # Ornithob0t
 Ornithob0t is a Twitter bot that generates tweets from the content in the eBird.org website: <br><br>
-
 ![ornithobot_main](https://github.com/JVinuelas19/TwitterBot/assets/111135343/057d9126-a39f-4f82-9aa1-0e86ade6a210) <br><br>
-
 Features:
 - Webscrapes concrete bird data from eBird-org and returns a fresh looking tweet respecting Twitter's character limit.
 - Tweet a random bird from eBird.org and store the scrapped fields in a database.
@@ -10,11 +8,8 @@ Features:
 - Tweet IDs management (read and write IDs from file).
 - Retweet tweets from a selected account (in my case @Team_eBird , but it can retweet who you want) based on Tweet IDs to avoid redundancy retweets.
 - Reply to users if they ask for a concrete bird with that bird data: <br><br>
-
-
 ![ornithobot_reply](https://github.com/JVinuelas19/TwitterBot/assets/111135343/4d3b8066-3962-4a28-bb61-2d9f9d2819ce) 
 <br><br>
-
 - Reply to users if they use target words (This feature has no use yet)
 - Reply to users if they use bad words with an advertise. (Ban system is not implemented yet)
 - It can randomly tweet (1% chance) a meme bird when using the second feature: Anivia the Cryophoenix 
