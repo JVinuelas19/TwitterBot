@@ -1,6 +1,7 @@
 # Ornithob0t
 Ornithob0t is a Twitter bot that generates tweets from the content in the eBird.org website: <br><br>
-![ornithobot_main](https://github.com/JVinuelas19/TwitterBot/assets/111135343/057d9126-a39f-4f82-9aa1-0e86ade6a210) <br><br><br>
+![twitterbotflow](https://github.com/JVinuelas19/TwitterBot/assets/111135343/f368cf0d-8bb3-487d-81f7-4fff7007c0f6)
+<br><br><br>
 Features:
 - Webscrapes concrete bird data from eBird.org and returns a fresh looking tweet respecting Twitter's character limit.
 - Tweet a random bird from eBird.org and store the scrapped fields in a database.
