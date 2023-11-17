@@ -16,3 +16,5 @@ Features:
 Future features will include a temporary ban system to the disrespectful replys, a database to manage these bans, thread creation with bird info instead of single tweets and an upgrade to the retweet function. 
 The database can be generated with the dump file and MySQL Workbench.
 The bot is currently unavailable due to Twitter API changes after the purchase of the brand by Elon Musk. I will fix it ASAP.
+
+UPDATE: Bot bird-tweeting functions are working again! I am still developing the retweets and replies functions to work again.
