@@ -4,6 +4,7 @@ import emoji
 import requests
 import shutil
 import mysql.connector
+import os, sys
 from bs4 import BeautifulSoup
 from random import randint
 
@@ -28,7 +29,8 @@ from random import randint
 ###############################################################   AUTHENTICATION FUNCTIONS   ##################################################################################
 
 #Authentication strings used by Twitter: 
-with open('texts/keys.txt') as keys:
+path = os.path.dirname(os.path.abspath(sys.argv[0]))
+with open(f'{path}/texts/keys.txt') as keys:
     consumer_key = (keys.readline().strip())
     consumer_secret = (keys.readline().strip())
     access_token = (keys.readline().strip())
@@ -43,15 +45,15 @@ api = tweepy.Client(consumer_key=consumer_key,
                     wait_on_rate_limit=True)
 media = tweepy.API(auth, wait_on_rate_limit=True)
 #Starts the connection with the database:
-with open('texts/dbkeys.txt') as dbkeys:
+with open(f'{path}/texts/dbkeys.txt') as dbkeys:
     host=dbkeys.readline().strip()
     user=dbkeys.readline().strip()
     password=dbkeys.readline().strip()
     database=dbkeys.readline().strip()
 mydb = mysql.connector.connect(host=host, 
-                               user=user, 
-                               password=password, 
-                               database=database)
+                            user=user, 
+                            password=password, 
+                            database=database)
 mycursor = mydb.cursor()
 
 ######################################################################   WEBSCRAPPING FUNCTIONS   ############################################################################
@@ -61,7 +63,7 @@ def save_image(image):
     r = requests.get(image, stream = True)
     if(r.status_code == 200):
         r.raw.decode_content = True
-        with open ("imagenes/download.jpg", 'wb') as f:
+        with open (f"{path}/imagenes/download.jpg", 'wb') as f:
             shutil.copyfileobj(r.raw, f)
 
 
@@ -81,8 +83,8 @@ def save_to_database(bn, sn, desc, lnk, imag):
 def load_data(soup, page, image, user):
     OTHER_CHARS_LEN = 8
     MAX_DATA_LEN = 280
-    birdname = soup.find('span', class_='Heading-main Media--hero-title').text
-    birdkey = soup.find('span', class_='Heading-sub Heading-sub--sci Heading-sub--custom u-text-4-loose').text
+    birdname = soup.find('span', class_='Heading-main').text
+    birdkey = soup.find('span', class_='Heading-sub Heading-sub--sci').text
     details = soup.find('p', class_='u-stack-sm').text
     link = page.url
     #We fit the length of the information to the maximum space available searching the last available dot and trimming the data.
@@ -129,7 +131,7 @@ def request_bird(link, user):
             print(f'El enlace solicitado es {url}')
         page = requests.get(url)
         soup = BeautifulSoup(page.content, 'html.parser')
-        imgTag = soup.find('img')
+        imgTag = soup.find('img', class_="Species-media-image")
         try:
             image = imgTag['src']
             image_found = True
@@ -159,7 +161,7 @@ def pick_a_bird(bird):
 
 #Reads the last tweet id registered
 def read_tweet_id(id_type):
-    with open('texts/last_id.txt', 'r') as file:
+    with open(f'{path}/texts/last_id.txt', 'r') as file:
         lines = file.readlines()
         id = int(lines[id_type]) 
     return id
@@ -167,7 +169,7 @@ def read_tweet_id(id_type):
 
 #Writes the last tweet id registered
 def store_tweet_id(id_number, id_type):
-    with open('texts/last_id.txt', 'r+') as file:
+    with open(f'{path}/texts/last_id.txt', 'r+') as file:
         lines = file.read().splitlines()
         file.seek(0)
         file.truncate(0)
@@ -200,11 +202,11 @@ def tweetbird_db():
         r = requests.get(img, stream = True)
         if(r.status_code == 200):
             r.raw.decode_content = True
-            with open ("imagenes/download.jpg", 'wb') as f:
+            with open (f'{path}/imagenes/download.jpg', 'wb') as f:
                 shutil.copyfileobj(r.raw, f)
         
         #Creates the tweet with all the information obtained and tweets it
-        image = media.media_upload("imagenes/download.jpg")
+        image = media.media_upload(f"{path}/imagenes/download.jpg")
         api.create_tweet(text=birdtweet, media_ids=[image.media_id], user_auth=True)
     #Funny tweet
     else:   
@@ -216,7 +218,7 @@ def tweetbird_scrap():
     data=request_bird(None, None)
     #try:
     birdtweet=gen_tweet(data[0],data[1],data[2],data[3], None)
-    image = media.media_upload("imagenes/download.jpg")
+    image = media.media_upload(f"{path}/imagenes/download.jpg")
     api.create_tweet(text=birdtweet, media_ids=[image.media_id])
 #except:
      #   print("Unable to format bird data. Tweet is longer than available.")
@@ -252,7 +254,7 @@ def check_mentions():
                         api.update_status(status=birdtweet, in_reply_to_status_id=tweet.id, auto_populate_reply_metadata=True, media_ids=[media.media_id])
                         print('Tweet enviado')
                 else:
-                    with open('texts/badwords.txt', 'r') as badwords:
+                    with open(f'{path}/texts/badwords.txt', 'r') as badwords:
                         word = badwords.read().splitlines()
                         while(not getBlocked and i <= MAX_BADWORDS):
                             #if (word[i].casefold() in casefold) is True):
@@ -306,7 +308,7 @@ def lord_and_savior(user):
                     break
                     
             if(tweet.id > int(id) and jesus):
-                with open("texts/memes.txt", "r") as memes:
+                with open(f"{path}/texts/memes.txt", "r") as memes:
                     list_memes = memes.readlines()
                     meme = list_memes[randint(0,26)]
                 status=f"@{tweet.user.screen_name} {meme}"
@@ -354,6 +356,6 @@ def main():
         tweetbird_scrap()
     except:
         tweetbird_db()
- 
+     
 if __name__ == "__main__":
     main()
